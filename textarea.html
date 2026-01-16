@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    textarea {
+      height: 200px;
+      width: 630px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border: 2px solid black;
+    }
+    button {
+      margin: 2px;
+      padding: 10px;
+      background-color: black;
+      color: white;
+      border: none;
+      /* border: 1px solid white; */
+      box-shadow: 0px 0px 5px red;
+      border-radius: 10px;
+    }
+    body {
+      text-align: center;
+      background-color: black;
+    }
+    h1 {
+      color: white;
+    }
+  </style>
+  <body>
+    <h1>Text Editor</h1>
+    <textarea name="" id="editor"></textarea>
+    <div class="btn">
+      <button onclick="UpperCase()" class="btn1">Uppercase</button>
+      <button onclick="LowerCase()" class="btn2">Lowercase</button>
+      <button onclick="Clear()" class="btn3">Clear</button>
+      <button onclick="Fontincrease()" class="btn4">A+</button>
+      <button onclick="Fontdecrease()" class="btn5">A-</button>
+      <button onclick="Blue()" class="btn6">Blue color</button>
+      <button onclick="Red()" class="btn7">Red color</button>
+      <button onclick="Bgyellow()" class="btn8">Bg yellow</button>
+      <button onclick="Bgorange()" class="btn9">Bg orange</button><br />
+      <button onclick="Left()" class="btn10">Left</button>
+      <button onclick="Center()" class="btn11">Center</button>
+      <button onclick="Right()" class="btn12">Right</button>
+    </div>
+  </body>
+  <script src="textarea.js"></script>
+</html>

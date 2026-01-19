@@ -1,53 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <style>
-    textarea {
-      height: 200px;
-      width: 630px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      border: 2px solid black;
-    }
-    button {
-      margin: 2px;
-      padding: 10px;
-      background-color: black;
-      color: white;
-      border: none;
-      /* border: 1px solid white; */
-      box-shadow: 0px 0px 5px red;
-      border-radius: 10px;
-    }
-    body {
-      text-align: center;
-      background-color: black;
-    }
-    h1 {
-      color: white;
-    }
-  </style>
-  <body>
-    <h1>Text Editor</h1>
-    <textarea name="" id="editor"></textarea>
-    <div class="btn">
-      <button onclick="UpperCase()" class="btn1">Uppercase</button>
-      <button onclick="LowerCase()" class="btn2">Lowercase</button>
-      <button onclick="Clear()" class="btn3">Clear</button>
-      <button onclick="Fontincrease()" class="btn4">A+</button>
-      <button onclick="Fontdecrease()" class="btn5">A-</button>
-      <button onclick="Blue()" class="btn6">Blue color</button>
-      <button onclick="Red()" class="btn7">Red color</button>
-      <button onclick="Bgyellow()" class="btn8">Bg yellow</button>
-      <button onclick="Bgorange()" class="btn9">Bg orange</button><br />
-      <button onclick="Left()" class="btn10">Left</button>
-      <button onclick="Center()" class="btn11">Center</button>
-      <button onclick="Right()" class="btn12">Right</button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Calculator (Flex Version)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+            width: 300px; /* Fixed width helps Flexbox stay stable */
+        }
+
+        #display {
+            width: 100%;
+            height: 50px;
+            font-size: 24px;
+            text-align: right;
+            margin-bottom: 15px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        /* FLEXBOX LOGIC STARTS HERE */
+        .buttons {
+            display: flex;       /* Enables Flexbox */
+            flex-wrap: wrap;     /* Allows buttons to drop to the next line */
+            justify-content: space-between; /* Spreads buttons out evenly */
+        }
+
+        button {
+            /* Math: We want 4 buttons per row. 
+               100% / 4 = 25%. 
+               But we need space (gap) between them.
+               So we use 23% width and the remaining space becomes the gap.
+            */
+            width: 23%;          
+            height: 60px;        
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #fff;
+            margin-bottom: 10px; /* Space below every button */
+            transition: 0.2s;
+        }
+        
+        /* The Equal button needs to be double size (2 buttons + 1 gap) */
+        .equal-btn {
+            width: 48%; /* 23% + 23% + 2% gap space */
+        }
+
+        button:hover { background-color: #ddd; }
+
+        .operator { background-color: #ff9500; color: white; }
+        .operator:hover { background-color: #e08900; }
+        
+        .clear-btn { background-color: #ff3b30; color: white; }
+        .clear-btn:hover { background-color: #d63229; } -->
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <input type="text" id="display" readonly>
+    <div class="buttons">
+        <button onclick="clearDisplay()" class="clear-btn">C</button>
+        <button onclick="deleteLast()">DEL</button>
+        <button onclick="appendToDisplay('.')">.</button>
+        <button onclick="appendToDisplay('/')" class="operator">/</button>
+
+        <button onclick="appendToDisplay('7')">7</button>
+        <button onclick="appendToDisplay('8')">8</button>
+        <button onclick="appendToDisplay('9')">9</button>
+        <button onclick="appendToDisplay('*')" class="operator">*</button>
+
+        <button onclick="appendToDisplay('4')">4</button>
+        <button onclick="appendToDisplay('5')">5</button>
+        <button onclick="appendToDisplay('6')">6</button>
+        <button onclick="appendToDisplay('-')" class="operator">-</button>
+
+        <button onclick="appendToDisplay('1')">1</button>
+        <button onclick="appendToDisplay('2')">2</button>
+        <button onclick="appendToDisplay('3')">3</button>
+        <button onclick="appendToDisplay('+')" class="operator">+</button>
+
+        <button onclick="appendToDisplay('00')">00</button>
+        <button onclick="appendToDisplay('0')">0</button>
+        <button onclick="calculate()" class="operator equal-btn">=</button>
     </div>
-  </body>
-  <script src="textarea.js"></script>
+</div>
+
+<script>
+    const display = document.getElementById('display');
+
+    function appendToDisplay(input) {
+        display.value += input;
+    }
+
+    function clearDisplay() {
+        display.value = "";
+    }
+
+    function deleteLast() {
+        display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+        try {
+            display.value = eval(display.value);
+        } catch (error) {
+            display.value = "Error";
+        }
+    }
+</script>
+
+</body>
 </html>

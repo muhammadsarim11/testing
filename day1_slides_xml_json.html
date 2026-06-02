@@ -1,0 +1,344 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .deck { font-family: var(--font-sans); }
+  .slide { display: none; min-height: 420px; padding: 36px 40px 28px; flex-direction: column; justify-content: flex-start; }
+  .slide.active { display: flex; }
+  .slide-num { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 18px; letter-spacing: 0.06em; }
+  .slide-title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; line-height: 1.3; }
+  .slide-sub { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 24px; }
+  .divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 0 -40px 24px; }
+  .point { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+  .dot-blue { background: #185FA5; }
+  .dot-teal { background: #0F6E56; }
+  .dot-amber { background: #BA7517; }
+  .dot-purple { background: #534AB7; }
+  .dot-coral { background: #993C1D; }
+  .point-text { font-size: 14px; color: var(--color-text-primary); line-height: 1.65; }
+  .point-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .badge { font-size: 11px; padding: 2px 9px; border-radius: 20px; font-weight: 500; display: inline-block; }
+  .b-blue   { background: #E6F1FB; color: #0C447C; }
+  .b-teal   { background: #E1F5EE; color: #085041; }
+  .b-amber  { background: #FAEEDA; color: #633806; }
+  .b-purple { background: #EEEDFE; color: #3C3489; }
+  .b-coral  { background: #FAECE7; color: #712B13; }
+  .b-green  { background: #EAF3DE; color: #27500A; }
+  .b-gray   { background: #F1EFE8; color: #444441; }
+  @media (prefers-color-scheme: dark) {
+    .b-blue   { background: #0C447C; color: #B5D4F4; }
+    .b-teal   { background: #085041; color: #9FE1CB; }
+    .b-amber  { background: #633806; color: #FAC775; }
+    .b-purple { background: #3C3489; color: #CECBF6; }
+    .b-coral  { background: #712B13; color: #F5C4B3; }
+    .b-green  { background: #27500A; color: #C0DD97; }
+    .b-gray   { background: #444441; color: #D3D1C7; }
+  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .col-card { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; }
+  .col-card-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; }
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item { display: flex; gap: 14px; }
+  .tl-left { display: flex; flex-direction: column; align-items: center; }
+  .tl-year { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); min-width: 38px; text-align: right; padding-top: 3px; }
+  .tl-line-wrap { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .tl-vline { width: 1px; flex: 1; min-height: 18px; background: var(--color-border-tertiary); margin: 3px 0; }
+  .tl-text { font-size: 13px; color: var(--color-text-primary); padding-top: 2px; padding-bottom: 14px; line-height: 1.5; }
+  .tl-sub { font-size: 12px; color: var(--color-text-secondary); }
+  .code-block { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 14px 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; color: var(--color-text-primary); white-space: pre; overflow-x: auto; }
+  .tag { color: #185FA5; }
+  .key { color: #0F6E56; }
+  .val { color: #BA7517; }
+  .cmt { color: var(--color-text-tertiary); font-style: italic; }
+  .compare-row { display: flex; align-items: stretch; gap: 0; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; margin-bottom: 8px; }
+  .compare-label { font-size: 12px; color: var(--color-text-secondary); padding: 8px 12px; background: var(--color-background-secondary); min-width: 90px; display: flex; align-items: center; border-right: 0.5px solid var(--color-border-tertiary); }
+  .compare-xml { font-size: 12px; color: var(--color-text-primary); padding: 8px 12px; flex: 1; border-right: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); display: flex; align-items: center; }
+  .compare-json { font-size: 12px; color: var(--color-text-primary); padding: 8px 12px; flex: 1; background: var(--color-background-primary); display: flex; align-items: center; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 40px 16px; border-top: 0.5px solid var(--color-border-tertiary); }
+  .nav-btn { padding: 7px 18px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; cursor: pointer; background: transparent; color: var(--color-text-primary); font-family: var(--font-sans); }
+  .nav-btn:hover { background: var(--color-background-secondary); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .nav-dots { display: flex; gap: 6px; align-items: center; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-border-secondary); cursor: pointer; transition: background 0.2s; }
+  .nav-dot.on { background: var(--color-text-secondary); }
+  .highlight-box { border-left: 2px solid #185FA5; background: #E6F1FB; border-radius: 0; padding: 10px 14px; font-size: 13px; color: #0C447C; line-height: 1.6; margin-bottom: 16px; }
+  @media (prefers-color-scheme: dark) {
+    .highlight-box { background: #0C447C22; color: #B5D4F4; border-color: #185FA5; }
+  }
+  .table-wrap { width: 100%; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; }
+  .tbl-head { display: grid; grid-template-columns: 1.2fr 1fr 1fr; background: var(--color-background-secondary); }
+  .tbl-row  { display: grid; grid-template-columns: 1.2fr 1fr 1fr; border-top: 0.5px solid var(--color-border-tertiary); }
+  .tbl-cell { font-size: 12.5px; padding: 9px 12px; color: var(--color-text-primary); line-height: 1.4; }
+  .tbl-head .tbl-cell { font-weight: 500; font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+</style>
+
+<div class="deck">
+
+  <div class="slide active" id="slide-1">
+    <div class="slide-num">SLIDE 01 OF 08 &nbsp;—&nbsp; DAY 1 INTRODUCTION</div>
+    <div class="slide-title">Data processing with XML and JSON</div>
+    <div class="slide-sub">Understanding how computers store and exchange information</div>
+    <hr class="divider">
+    <div class="point">
+      <div class="dot dot-blue"></div>
+      <div><div class="point-text">Every app you use — WhatsApp, Google, YouTube — stores and sends data</div></div>
+    </div>
+    <div class="point">
+      <div class="dot dot-blue"></div>
+      <div><div class="point-text">That data needs a format — a structure both the sender and receiver understand</div></div>
+    </div>
+    <div class="point">
+      <div class="dot dot-blue"></div>
+      <div><div class="point-text">XML and JSON are the two most widely used data formats in the world</div></div>
+    </div>
+    <div class="point">
+      <div class="dot dot-blue"></div>
+      <div><div class="point-text">By end of this session — you will read, write, and understand both formats</div></div>
+    </div>
+    <div style="margin-top:20px;display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="badge b-blue">XML</span>
+      <span class="badge b-teal">JSON</span>
+      <span class="badge b-amber">Data formats</span>
+      <span class="badge b-purple">Web communication</span>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-2">
+    <div class="slide-num">SLIDE 02 OF 08 &nbsp;—&nbsp; WHAT IS DATA FORMAT</div>
+    <div class="slide-title">What is a data format?</div>
+    <div class="slide-sub">Before XML and JSON — let us understand the concept</div>
+    <hr class="divider">
+    <div class="highlight-box">Think of it like this — if you write a letter in Urdu and send it to someone who only reads English, they cannot understand it. Data formats solve this exact problem between computers.</div>
+    <div class="point">
+      <div class="dot dot-teal"></div>
+      <div><div class="point-text">A data format is an agreed way of writing information</div><div class="point-sub">so any computer or program can read and understand it</div></div>
+    </div>
+    <div class="point">
+      <div class="dot dot-teal"></div>
+      <div><div class="point-text">Without a format — data is just random text with no meaning</div></div>
+    </div>
+    <div class="point">
+      <div class="dot dot-teal"></div>
+      <div><div class="point-text">With a format — both sides know exactly where each piece of information is</div></div>
+    </div>
+    <div class="point">
+      <div class="dot dot-teal"></div>
+      <div><div class="point-text">Common formats you may have heard of: CSV, XML, JSON, YAML</div><div class="point-sub">Each has its own rules and best use cases</div></div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-3">
+    <div class="slide-num">SLIDE 03 OF 08 &nbsp;—&nbsp; HISTORY</div>
+    <div class="slide-title">A brief history — where did they come from?</div>
+    <div class="slide-sub">Understanding why each format was created</div>
+    <hr class="divider">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">1996</div>
+        <div class="tl-line-wrap"><div class="tl-dot" style="background:#185FA5"></div><div class="tl-vline"></div></div>
+        <div class="tl-text"><span class="badge b-blue" style="margin-bottom:4px">XML born</span><br>W3C created XML to share data between different systems<div class="tl-sub">It came from HTML — but HTML was for displaying, XML was for storing</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1999</div>
+        <div class="tl-line-wrap"><div class="tl-dot" style="background:#185FA5"></div><div class="tl-vline"></div></div>
+        <div class="tl-text">XML became the standard for SOAP web services and enterprise systems<div class="tl-sub">Banks, hospitals, governments — everyone used XML</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2001</div>
+        <div class="tl-line-wrap"><div class="tl-dot" style="background:#0F6E56"></div><div class="tl-vline"></div></div>
+        <div class="tl-text"><span class="badge b-teal" style="margin-bottom:4px">JSON born</span><br>Douglas Crockford created JSON — said "XML is too heavy for the web"<div class="tl-sub">JSON was simpler, shorter, and easier for JavaScript to use</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">2010+</div>
+        <div class="tl-line-wrap"><div class="tl-dot" style="background:#BA7517"></div></div>
+        <div class="tl-text">JSON became the standard for REST APIs and modern web apps<div class="tl-sub">Today — WhatsApp, Google Maps, Twitter all use JSON. XML still used in older systems</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-4">
+    <div class="slide-num">SLIDE 04 OF 08 &nbsp;—&nbsp; XML BASICS</div>
+    <div class="slide-title">What is XML?</div>
+    <div class="slide-sub">eXtensible Markup Language — a way to describe data using tags</div>
+    <hr class="divider">
+    <div class="two-col">
+      <div>
+        <div class="point"><div class="dot dot-blue"></div><div><div class="point-text">Uses opening and closing tags — just like HTML</div><div class="point-sub">&lt;name&gt;Ali&lt;/name&gt;</div></div></div>
+        <div class="point"><div class="dot dot-blue"></div><div><div class="point-text">Every tag you open must be closed</div><div class="point-sub">This is called well-formed XML</div></div></div>
+        <div class="point"><div class="dot dot-blue"></div><div><div class="point-text">Tags are case sensitive</div><div class="point-sub">&lt;Name&gt; and &lt;name&gt; are different</div></div></div>
+        <div class="point"><div class="dot dot-blue"></div><div><div class="point-text">One root tag wraps everything</div><div class="point-sub">Like a folder containing all files</div></div></div>
+      </div>
+      <div class="code-block"><span class="cmt">&lt;!-- XML example --&gt;</span>
+<span class="tag">&lt;student&gt;</span>
+  <span class="tag">&lt;name&gt;</span>Ali<span class="tag">&lt;/name&gt;</span>
+  <span class="tag">&lt;age&gt;</span>20<span class="tag">&lt;/age&gt;</span>
+  <span class="tag">&lt;city&gt;</span>Karachi<span class="tag">&lt;/city&gt;</span>
+  <span class="tag">&lt;grade&gt;</span>A<span class="tag">&lt;/grade&gt;</span>
+<span class="tag">&lt;/student&gt;</span></div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-5">
+    <div class="slide-num">SLIDE 05 OF 08 &nbsp;—&nbsp; JSON BASICS</div>
+    <div class="slide-title">What is JSON?</div>
+    <div class="slide-sub">JavaScript Object Notation — a lightweight way to store data using key-value pairs</div>
+    <hr class="divider">
+    <div class="two-col">
+      <div>
+        <div class="point"><div class="dot dot-teal"></div><div><div class="point-text">Data is written as key and value pairs</div><div class="point-sub">"name": "Ali"</div></div></div>
+        <div class="point"><div class="dot dot-teal"></div><div><div class="point-text">Curly braces {} hold one object</div><div class="point-sub">Square brackets [] hold a list</div></div></div>
+        <div class="point"><div class="dot dot-teal"></div><div><div class="point-text">Keys must always be in double quotes</div><div class="point-sub">"name" not name</div></div></div>
+        <div class="point"><div class="dot dot-teal"></div><div><div class="point-text">Much shorter than XML for the same data</div><div class="point-sub">Faster to send over the internet</div></div></div>
+      </div>
+      <div class="code-block"><span class="cmt">// JSON example</span>
+{
+  <span class="key">"name"</span>: <span class="val">"Ali"</span>,
+  <span class="key">"age"</span>:  <span class="val">20</span>,
+  <span class="key">"city"</span>: <span class="val">"Karachi"</span>,
+  <span class="key">"grade"</span>: <span class="val">"A"</span>
+}</div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-6">
+    <div class="slide-num">SLIDE 06 OF 08 &nbsp;—&nbsp; COMPARISON</div>
+    <div class="slide-title">XML vs JSON — side by side</div>
+    <div class="slide-sub">Same data, two different ways of writing it</div>
+    <hr class="divider">
+    <div class="compare-row" style="background:var(--color-background-secondary)">
+      <div class="compare-label" style="font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:0.04em"></div>
+      <div class="compare-xml" style="font-weight:500;font-size:12px;color:var(--color-text-secondary)"><span class="badge b-blue">XML</span></div>
+      <div class="compare-json" style="font-weight:500;font-size:12px;color:var(--color-text-secondary)"><span class="badge b-teal">JSON</span></div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Created</div>
+      <div class="compare-xml">1996</div>
+      <div class="compare-json">2001</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Syntax</div>
+      <div class="compare-xml">&lt;tag&gt;value&lt;/tag&gt;</div>
+      <div class="compare-json">"key": "value"</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Size</div>
+      <div class="compare-xml">Larger — more text</div>
+      <div class="compare-json">Smaller — less text</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Readability</div>
+      <div class="compare-xml">Readable but verbose</div>
+      <div class="compare-json">Clean and minimal</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Used in</div>
+      <div class="compare-xml">Banks, govt, SOAP APIs</div>
+      <div class="compare-json">REST APIs, web, mobile</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-label">Supports</div>
+      <div class="compare-xml">Attributes, namespaces</div>
+      <div class="compare-json">Arrays, nested objects</div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-7">
+    <div class="slide-num">SLIDE 07 OF 08 &nbsp;—&nbsp; WHEN TO USE WHICH</div>
+    <div class="slide-title">When should you use XML vs JSON?</div>
+    <div class="slide-sub">Both are useful — the situation decides which one to pick</div>
+    <hr class="divider">
+    <div class="two-col">
+      <div class="col-card">
+        <div class="col-card-title"><span class="badge b-blue">Use XML when</span></div>
+        <div class="point"><div class="dot dot-blue"></div><div class="point-text">Working with older systems like banks or government software</div></div>
+        <div class="point"><div class="dot dot-blue"></div><div class="point-text">Document needs strict validation and rules (XSD schema)</div></div>
+        <div class="point"><div class="dot dot-blue"></div><div class="point-text">Data has complex structure with attributes</div></div>
+        <div class="point"><div class="dot dot-blue"></div><div class="point-text">Working with SOAP web services</div></div>
+      </div>
+      <div class="col-card">
+        <div class="col-card-title"><span class="badge b-teal">Use JSON when</span></div>
+        <div class="point"><div class="dot dot-teal"></div><div class="point-text">Building a modern web or mobile application</div></div>
+        <div class="point"><div class="dot dot-teal"></div><div class="point-text">Calling or creating a REST API</div></div>
+        <div class="point"><div class="dot dot-teal"></div><div class="point-text">Speed matters — JSON is lighter and faster</div></div>
+        <div class="point"><div class="dot dot-teal"></div><div class="point-text">Working with JavaScript — JSON is natively supported</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" id="slide-8">
+    <div class="slide-num">SLIDE 08 OF 08 &nbsp;—&nbsp; FIRST CODE LOOK</div>
+    <div class="slide-title">Your first look at real code</div>
+    <div class="slide-sub">Same student data — written in both formats with one line of parsing</div>
+    <hr class="divider">
+    <div class="two-col">
+      <div>
+        <div style="margin-bottom:8px"><span class="badge b-blue">XML</span></div>
+        <div class="code-block"><span class="tag">&lt;students&gt;</span>
+  <span class="tag">&lt;student&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Ali<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;grade&gt;</span>A<span class="tag">&lt;/grade&gt;</span>
+  <span class="tag">&lt;/student&gt;</span>
+<span class="tag">&lt;/students&gt;</span>
+
+<span class="cmt">// parse in browser</span>
+<span class="key">new</span> DOMParser()
+  .parseFromString(
+    xmlData,
+    <span class="val">"text/xml"</span>
+  );</div>
+      </div>
+      <div>
+        <div style="margin-bottom:8px"><span class="badge b-teal">JSON</span></div>
+        <div class="code-block">{
+  <span class="key">"students"</span>: [
+    {
+      <span class="key">"name"</span>:  <span class="val">"Ali"</span>,
+      <span class="key">"grade"</span>: <span class="val">"A"</span>
+    }
+  ]
+}
+
+<span class="cmt">// parse in browser</span>
+JSON.<span class="key">parse</span>(
+  jsonData
+);</div>
+      </div>
+    </div>
+    <div style="margin-top:14px" class="highlight-box">Next session — we will run this code live, read values, filter data, and add new records. Today was all about understanding the concept.</div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" disabled>← Prev</button>
+    <div class="nav-dots" id="nav-dots"></div>
+    <button class="nav-btn" id="btn-next" onclick="navigate(1)">Next →</button>
+  </div>
+</div>
+
+<script>
+  let current = 0;
+  const total = 8;
+
+  const dotsEl = document.getElementById('nav-dots');
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' on' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  }
+
+  function goTo(n) {
+    document.getElementById('slide-' + (current + 1)).classList.remove('active');
+    dotsEl.children[current].classList.remove('on');
+    current = n;
+    document.getElementById('slide-' + (current + 1)).classList.add('active');
+    dotsEl.children[current].classList.add('on');
+    document.getElementById('btn-prev').disabled = current === 0;
+    document.getElementById('btn-next').disabled = current === total - 1;
+  }
+
+  function navigate(dir) {
+    const next = current + dir;
+    if (next >= 0 && next < total) goTo(next);
+  }
+</script>
